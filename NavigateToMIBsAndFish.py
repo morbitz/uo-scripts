@@ -1,6 +1,80 @@
 import math
 
 
+WATER_ID = 0x0244
+IN_RANGE_DISTANCE = 20
+
+nav = {
+    "raise": "Raise Anchor",
+    "drop": "Drop Anchor",
+    "go": "Forward",
+    "fr": "Forward Right",
+    "fl": "Forward Left",
+    "r": "Right",
+    "tr": "Turn Right",
+    "l": "Left",
+    "tl": "Turn Left",
+    "t": "Turn About",
+    "back": "Backward",
+}
+
+
+def calculate_path_coords(pos, dest):
+    pass
+
+
+def is_land_between(pos, dest):
+    path_between = calculate_path_coords(pos, dest)
+
+    return any(map(
+        path_between, lambda c: Statics.GetLandID(c[0], c[1]) != WATER_ID))
+
+
+def is_land_ahead(coords):
+    # tile = Statics.GetStaticsTileInfo(coords[0], coords[1], Player.Map)
+
+    # return tile.StaticZ > 0
+    return Statics.GetLandID(coords[0], coords[1]) != WATER_ID
+
+
+def destination_in_range(pos, dest):
+    return math.abs(pos[0] - dest[0]) < IN_RANGE_DISTANCE or \
+        math.abs(pos[1] - dest[1]) < IN_RANGE_DISTANCE
+
+
+def align_trajectory(player_coords, mark_coords):
+    """Calculates the trajectory."""
+    # 1. recebe as coordenadas da posicao atual e do destino
+    # 2. devolve onde deve virar de maneira a alinhar a direcao para as
+    # coordenadas
+    # calcula diferenca entre o jogador e o destino e devolve a direcao
+    # seguinte que o barco tem de alinhar
+
+    # o destino esta no ecra e ha obstaculos entre ele
+    if destination_in_range(player_coords, mark_coords):
+        # check land between
+
+        pass
+
+
+def shorter_distance_than(coord1, coord2, destination):
+    """Get shorter distance to destination between 2 coordinates."""
+    dist1 = math.abs(coord1[0] - x) + math.abs(coord1[1] - y)
+    dist2 = math.abs(coord2[0] - x) + math.abs(coord2[1] - y)
+
+    return dist1 < dist2
+
+
+def calc_closest_coord(pos, coord_list):
+    """Calculates the closest coordinate to another given coordinate."""
+    coord = coord_list[0]
+    for x, y in coord_list[1:]:
+        if shorter_distance_than(coord, (x, y), pos):
+            coord = (x, y)
+
+    return coord
+
+
 def gen_map(coords, current_pos):
     map_in = "+amib: 4510 420 1 9676 +amib: 3859 1003 1 0181 +amib: 4635 351 1 7979 +amib: 4650 897 1 0203 +amib: 4732 374 1 3731 +amib: 4691 713 1 5010 +amib: 4699 357 1 6383 +amib: 4627 856 1 4245 +amib: 4994 354 1 7495 +amib: 4364 487 1 5469 +amib: 4389 668 1 6438 +amib: 4871 995 1 3470 +amib: 4773 745 1 7214 +amib: 5050 587 1 2753 +amib: 4709 271 1 5069 +amib: 3985 117 1 1891 +amib: 5033 420 1 2564 +amib: 4282 38 1 9359 +amib: 4993 143 1 8989 +amib: 4170 846 1 0977"
     map_in = map_in.split("+amib: ")
@@ -8,7 +82,7 @@ def gen_map(coords, current_pos):
     for i in map_in:
         line = list(filter(lambda x: x != '', i.split(" ")))
         if len(line):
-            a.append((int(line[0]), int(line[1])))
+            a.append((int(line[0]), int(line[1]))))
     coords.append(current_pos)
     margin_top = min(coords, key=lambda x: x[0])
     margin_bottom = max(coords, key=lambda x: x[0])
